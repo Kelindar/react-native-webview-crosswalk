@@ -4,7 +4,6 @@
     "description":      "Crosswalk's WebView for React Native on Android",
     "main":             "index.js",
     "scripts":          {
-        "postinstall": "./crosswalk.sh"
     },
     "repository":       {
         "type": "git",
