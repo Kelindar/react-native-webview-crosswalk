@@ -65,7 +65,7 @@ var CrosswalkWebView = React.createClass({
         );
     },
     getWebViewHandle () {
-        return React.findNodeHandle(this.refs[WEBVIEW_REF]);
+        return ReactNative.findNodeHandle(this.refs[WEBVIEW_REF]);
     },
     onNavigationStateChange (event) {
         var { onNavigationStateChange } = this.props;
