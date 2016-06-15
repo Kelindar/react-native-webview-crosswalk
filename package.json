@@ -1,10 +1,9 @@
 {
     "name":             "react-native-webview-crosswalk",
-    "version":          "0.0.9",
+    "version":          "0.0.10",
     "description":      "Crosswalk's WebView for React Native on Android",
     "main":             "index.js",
-    "scripts":          {
-    },
+    "scripts":          {},
     "repository":       {
         "type": "git",
         "url":  "git+https://github.com/jordansexton/react-native-webview-crosswalk.git"
@@ -18,18 +17,12 @@
         "xwalk",
         "android"
     ],
-    "author":           "Jordan Sexton <jordan@jordansexton.com>",
+    "author": "Roman Atachiants <kelindar@gmail.com>",
     "contributors":     [
-        {
-            "name":  "Jordan Sexton",
-            "email": "jordan@jordansexton.com"
-        }
+        { "name":  "Roman Atachiants", "email": "kelindar@gmail.com" },
+        { "name":  "Jordan Sexton", "email": "jordan@jordansexton.com" }
     ],
     "license":          "MIT",
-    "bugs":             {
-        "url": "https://github.com/jordansexton/react-native-webview-crosswalk/issues"
-    },
-    "homepage":         "https://github.com/jordansexton/react-native-webview-crosswalk",
     "peerDependencies": {
         "react-native": ">=0.19.0"
     }

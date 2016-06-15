@@ -93,6 +93,13 @@ var CrosswalkWebView = React.createClass({
             UIManager.NativeCrosswalkWebView.Commands.reload,
             null
         );
+    },
+    send (message: string) {
+        UIManager.dispatchViewManagerCommand(
+            this.getWebViewHandle(),
+            UIManager.NativeCrosswalkWebView.Commands.send,
+            [message]
+        );
     }
 });
 

@@ -17,10 +17,9 @@ import java.util.Map;
 public class CrosswalkWebViewGroupManager extends ViewGroupManager<CrosswalkWebView> {
 
     public static final int GO_BACK = 1;
-
     public static final int GO_FORWARD = 2;
-
     public static final int RELOAD = 3;
+    public static final int SEND_MESSAGE = 4;
 
     @VisibleForTesting
     public static final String REACT_CLASS = "CrosswalkWebView";
@@ -101,7 +100,8 @@ public class CrosswalkWebViewGroupManager extends ViewGroupManager<CrosswalkWebV
         return MapBuilder.of(
             "goBack", GO_BACK,
             "goForward", GO_FORWARD,
-            "reload", RELOAD
+            "reload", RELOAD,
+            "send", SEND_MESSAGE
         );
     }
 
@@ -117,7 +117,15 @@ public class CrosswalkWebViewGroupManager extends ViewGroupManager<CrosswalkWebV
             case RELOAD:
                 view.reload(XWalkView.RELOAD_NORMAL);
                 break;
+            case SEND_MESSAGE:
+                sendMessage(view, args.getString(0));
+                break;
         }
+    }
+
+    private void sendMessage(CrosswalkWebView view, String message) {
+        String script = "bridge.onMessage('" + message + "');";
+        view.evaluateJavascript(script, null);
     }
 
     @Override
