@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { PropTypes } from 'react';
-import ReactNative, { requireNativeComponent, View, StyleSheet } from 'react-native';
+import ReactNative, { requireNativeComponent, View, StyleSheet, UIManager } from 'react-native';
 
 var { 
 	addons: { PureRenderMixin }, 
