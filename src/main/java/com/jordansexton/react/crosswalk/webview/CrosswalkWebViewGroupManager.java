@@ -124,7 +124,7 @@ public class CrosswalkWebViewGroupManager extends ViewGroupManager<CrosswalkWebV
     }
 
     private void sendMessage(CrosswalkWebView view, String message) {
-        String script = "bridge.onMessage('" + message + "');";
+        String script = "window.onMessage('" + message + "');";
         view.evaluateJavascript(script, null);
     }
 

@@ -76,28 +76,28 @@ var CrosswalkWebView = React.createClass({
     goBack () {
         UIManager.dispatchViewManagerCommand(
             this.getWebViewHandle(),
-            UIManager.NativeCrosswalkWebView.Commands.goBack,
+            1,
             null
         );
     },
     goForward () {
         UIManager.dispatchViewManagerCommand(
             this.getWebViewHandle(),
-            UIManager.NativeCrosswalkWebView.Commands.goForward,
+            2,
             null
         );
     },
     reload () {
         UIManager.dispatchViewManagerCommand(
             this.getWebViewHandle(),
-            UIManager.NativeCrosswalkWebView.Commands.reload,
+            3,
             null
         );
     },
     send (message: string) {
         UIManager.dispatchViewManagerCommand(
             this.getWebViewHandle(),
-            UIManager.NativeCrosswalkWebView.Commands.send,
+            4,
             [message]
         );
     }
