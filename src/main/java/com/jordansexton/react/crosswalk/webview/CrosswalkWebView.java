@@ -105,7 +105,7 @@ class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
             String title = view.getTitle();
             
             // Check if it's a web view message
-            if (title.startsWith("wvb://message")) {
+            if (title.contains("wvb")) {
                 // If it's a bridge message, fetch the messages in flight and dispatch the event
                 ValueCallback<String> callback = new ValueCallback<String>() {
                         @Override
