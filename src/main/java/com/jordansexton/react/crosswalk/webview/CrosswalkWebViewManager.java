@@ -9,7 +9,6 @@ import java.util.Map;
 public class CrosswalkWebViewManager extends ReactContextBaseJavaModule {
 
     public static final String JSNavigationScheme = "react-js-navigation";
-
     private static final String REACT_CLASS = "CrosswalkWebViewManager";
 
     public CrosswalkWebViewManager (ReactApplicationContext reactContext) {

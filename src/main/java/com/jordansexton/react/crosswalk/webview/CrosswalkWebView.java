@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.SystemClock;
+import android.webkit.ValueCallback;
 
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactContext;
@@ -16,9 +17,7 @@ import org.xwalk.core.XWalkView;
 class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
 
     private final Activity activity;
-
     private final EventDispatcher eventDispatcher;
-
     private final ResourceClient resourceClient;
 
     public CrosswalkWebView (ReactContext reactContext, Activity _activity) {
@@ -61,7 +60,6 @@ class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
     }
 
     protected class ResourceClient extends XWalkResourceClient {
-
         private Boolean localhost = false;
         private String injectedJavascript = null;
 
@@ -95,25 +93,47 @@ class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
                     navigationHistory.canGoForward()
                 )
             );
+            
             if (injectedJavascript != null) {
-              view.load("javascript:(function() {\n" + injectedJavascript + ";\n})();", null);
+                view.load("javascript:(function() {\n" + injectedJavascript + ";\n})();", null);
             }
         }
 
         @Override
         public void onLoadStarted (XWalkView view, String url) {
             XWalkNavigationHistory navigationHistory = view.getNavigationHistory();
-            eventDispatcher.dispatchEvent(
-                new NavigationStateChangeEvent(
-                    getId(),
-                    SystemClock.uptimeMillis(),
-                    view.getTitle(),
-                    true,
-                    url,
-                    navigationHistory.canGoBack(),
-                    navigationHistory.canGoForward()
-                )
-            );
+            String title = view.getTitle();
+            
+            // Check if it's a web view message
+            if (title.startsWith("wvb://message")) {
+                // If it's a bridge message, fetch the messages in flight and dispatch the event
+                ValueCallback<String> callback = new ValueCallback<String>() {
+                        @Override
+                        public void onReceiveValue(String jsonResult) {
+                            //notifyCalled(jsonResult);
+                            eventDispatcher.dispatchEvent(
+                                new CrosswalkWebViewMessageEvent(
+                                    jsonResult
+                                )
+                            );
+                        }
+                    };
+                    
+                view.evaluateJavascript("window.WebViewBridge.__fetch__();", callback);   
+            } else {
+                // it's an actual navigation change, dispatch the event
+                eventDispatcher.dispatchEvent(
+                    new NavigationStateChangeEvent(
+                        getId(),
+                        SystemClock.uptimeMillis(),
+                        view.getTitle(),
+                        true,
+                        url,
+                        navigationHistory.canGoBack(),
+                        navigationHistory.canGoForward()
+                    )
+                );
+            }
         }
 
         @Override
