@@ -82,30 +82,16 @@ class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
         @Override
         public void onLoadFinished (XWalkView view, String url) {
             XWalkNavigationHistory navigationHistory = view.getNavigationHistory();
-            eventDispatcher.dispatchEvent(
-                new NavigationStateChangeEvent(
+
+            /*eventDispatcher.dispatchEvent(
+                new CrosswalkWebViewMessageEvent(
                     getId(),
                     SystemClock.uptimeMillis(),
-                    view.getTitle(),
-                    false,
-                    url,
-                    navigationHistory.canGoBack(),
-                    navigationHistory.canGoForward()
+                    "onLoadFinished: " + url
                 )
-            );
-            
-            if (injectedJavascript != null) {
-                view.load("javascript:(function() {\n" + injectedJavascript + ";\n})();", null);
-            }
-        }
+            );*/
 
-        @Override
-        public void onLoadStarted (XWalkView view, String url) {
-            XWalkNavigationHistory navigationHistory = view.getNavigationHistory();
-            String title = view.getTitle();
-            
-            // Check if it's a web view message
-            if (title.contains("wvb")) {
+            if (url.contains("wvb")) {
                 // If it's a bridge message, fetch the messages in flight and dispatch the event
                 ValueCallback<String> callback = new ValueCallback<String>() {
                         @Override
@@ -113,6 +99,8 @@ class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
                             //notifyCalled(jsonResult);
                             eventDispatcher.dispatchEvent(
                                 new CrosswalkWebViewMessageEvent(
+                                    getId(),
+                                    SystemClock.uptimeMillis(),
                                     jsonResult
                                 )
                             );
@@ -120,6 +108,42 @@ class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
                     };
                     
                 view.evaluateJavascript("window.WebViewBridge.__fetch__();", callback);   
+
+            } else {
+                eventDispatcher.dispatchEvent(
+                    new NavigationStateChangeEvent(
+                        getId(),
+                        SystemClock.uptimeMillis(),
+                        view.getTitle(),
+                        false,
+                        url,
+                        navigationHistory.canGoBack(),
+                        navigationHistory.canGoForward()
+                    )
+                );
+                
+                if (injectedJavascript != null) {
+                    view.load("javascript:(function() {\n" + injectedJavascript + ";\n})();", null);
+                }
+            }
+        }
+
+        @Override
+        public void onLoadStarted (XWalkView view, String url) {
+            XWalkNavigationHistory navigationHistory = view.getNavigationHistory();
+
+
+            /*eventDispatcher.dispatchEvent(
+                new CrosswalkWebViewMessageEvent(
+                    getId(),
+                    SystemClock.uptimeMillis(),
+                    "onLoadStarted: " + url
+                )
+            );*/
+
+            // Check if it's a web view message
+            if (url.contains("wvb")) {
+                // Do nothing
             } else {
                 // it's an actual navigation change, dispatch the event
                 eventDispatcher.dispatchEvent(

@@ -18,6 +18,7 @@ var CrosswalkWebView = React.createClass({
     propTypes: {
         localhost:               PropTypes.bool.isRequired,
         onNavigationStateChange: PropTypes.func,
+        onBridgeMessage:         PropTypes.func,
         injectedJavascript:      PropTypes.string,
         url:                     PropTypes.string,
         source:                  PropTypes.oneOfType([
@@ -61,7 +62,9 @@ var CrosswalkWebView = React.createClass({
                 testID={ this.props.testID }
                 localhost={ this.props.localhost }
                 injectedJavascript={ this.props.injectedJavascript }
-                onNavigationStateChange={ this.onNavigationStateChange } />
+                onNavigationStateChange={ this.onNavigationStateChange }
+                onBridgeMessage={ this.onBridgeMessage }
+                 />
         );
     },
     getWebViewHandle () {
@@ -71,6 +74,12 @@ var CrosswalkWebView = React.createClass({
         var { onNavigationStateChange } = this.props;
         if (onNavigationStateChange) {
             onNavigationStateChange(event.nativeEvent);
+        }
+    },
+    onBridgeMessage (event) {
+        var { onBridgeMessage } = this.props;
+        if (onBridgeMessage) {
+            onBridgeMessage(event.nativeEvent);
         }
     },
     goBack () {
