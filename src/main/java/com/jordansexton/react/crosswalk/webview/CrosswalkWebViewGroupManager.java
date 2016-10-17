@@ -77,27 +77,30 @@ public class CrosswalkWebViewGroupManager extends ViewGroupManager<CrosswalkWebV
 
     @ReactProp(name = "source")
     public void setSource(final CrosswalkWebView view, @Nullable ReadableMap source) {
-      if (source != null) {
-        if (source.hasKey("html")) {
-          final String html = source.getString("html");
-          activity.runOnUiThread(new Runnable() {
-              @Override
-              public void run () {
-                  view.load(null, html);
+      Activity _activity = reactContext.getCurrentActivity();
+      if (_activity != null) {
+          if (source != null) {
+              if (source.hasKey("html")) {
+                  final String html = source.getString("html");
+                  _activity.runOnUiThread(new Runnable() {
+                      @Override
+                      public void run () {
+                          view.load(null, html);
+                      }
+                  });
+                  return;
               }
-          });
-          return;
-        }
-        if (source.hasKey("uri")) {
-          final String url = source.getString("uri");
-          activity.runOnUiThread(new Runnable() {
-              @Override
-              public void run () {
-                  view.load(url, null);
+              if (source.hasKey("uri")) {
+                  final String url = source.getString("uri");
+                  _activity.runOnUiThread(new Runnable() {
+                      @Override
+                      public void run () {
+                          view.load(url, null);
+                      }
+                  });
+                  return;
               }
-          });
-          return;
-        }
+          }
       }
       setUrl(view, BLANK_URL);
     }
