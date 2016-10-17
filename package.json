@@ -1,9 +1,18 @@
 {
     "name":             "react-native-webview-crosswalk",
+<<<<<<< HEAD
     "version":          "0.0.25",
     "description":      "Crosswalk's WebView for React Native on Android",
     "main":             "index.js",
     "scripts":          {},
+=======
+    "version":          "0.4.0",
+    "description":      "Crosswalk's WebView for React Native on Android",
+    "scripts":          {
+        "postinstall": "node get_library.js",
+        "lint":        "eslint ."
+    },
+>>>>>>> jordansexton/master
     "repository":       {
         "type": "git",
         "url":  "git+https://github.com/jordansexton/react-native-webview-crosswalk.git"
@@ -25,7 +34,15 @@
     ],
     "license":          "MIT",
     "peerDependencies": {
-        "react":        ">=0.14.5",
-        "react-native": ">=0.25.0"
+        "react":        ">=15.3.0",
+        "react-native": ">=0.32.0"
+    },
+    "dependencies":     {
+        "node-wget": "0.4.2"
+    },
+    "devDependencies":  {
+        "babel-eslint":        "6.1.2",
+        "eslint":              "3.2.2",
+        "eslint-plugin-react": "6.0.0"
     }
 }
