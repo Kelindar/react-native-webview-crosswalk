@@ -11,7 +11,7 @@ class CrosswalkWebViewMessageEvent extends Event<CrosswalkWebViewMessageEvent> {
     private final String data;
 
     public CrosswalkWebViewMessageEvent (int viewTag, long timestampMs, String _data) {
-        super(viewTag, timestampMs);
+        super(viewTag);
         data = _data;
     }
 

@@ -94,33 +94,6 @@ public class CrosswalkWebViewGroupManager extends ViewGroupManager<CrosswalkWebV
         });
     }
 
-    @ReactProp(name = "source")
-    public void setSource(final CrosswalkWebView view, @Nullable ReadableMap source) {
-      if (source != null) {
-        if (source.hasKey("html")) {
-          final String html = source.getString("html");
-          activity.runOnUiThread(new Runnable() {
-              @Override
-              public void run () {
-                  view.load(null, html);
-              }
-          });
-          return;
-        }
-        if (source.hasKey("uri")) {
-          final String url = source.getString("uri");
-          activity.runOnUiThread(new Runnable() {
-              @Override
-              public void run () {
-                  view.load(url, null);
-              }
-          });
-          return;
-        }
-      }
-      setUrl(view, BLANK_URL);
-    }
-
     @ReactProp(name = "localhost")
     public void setLocalhost (CrosswalkWebView view, Boolean localhost) {
         view.setLocalhost(localhost);
@@ -164,16 +137,9 @@ public class CrosswalkWebViewGroupManager extends ViewGroupManager<CrosswalkWebV
     @Override
     public Map getExportedCustomDirectEventTypeConstants () {
         return MapBuilder.of(
-            CrosswalkWebViewMessageEvent.EVENT_NAME, MapBuilder.of("registrationName", "onBridgeMessage")
+            CrosswalkWebViewMessageEvent.EVENT_NAME, MapBuilder.of("registrationName", "onBridgeMessage"),
             NavigationStateChangeEvent.EVENT_NAME, MapBuilder.of("registrationName", "onNavigationStateChange"),
             ErrorEvent.EVENT_NAME, MapBuilder.of("registrationName", "onError")
         );
-    }
-
-    @Override
-    public void onDropViewInstance(CrosswalkWebView view) {
-        super.onDropViewInstance(view);
-        ((ThemedReactContext) view.getContext()).removeLifecycleEventListener((CrosswalkWebView) view);
-        view.onDestroy();
     }
 }
