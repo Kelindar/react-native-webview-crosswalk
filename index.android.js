@@ -3,12 +3,13 @@
 import React, { PropTypes } from 'react';
 import ReactNative, { requireNativeComponent, View, StyleSheet } from 'react-native';
 
-var { 
-	addons: { PureRenderMixin }, 
-	NativeModules: { UIManager, CrosswalkWebViewManager: { JSNavigationScheme } } 
+var {
+    addons: { PureRenderMixin },
+    NativeModules: { UIManager, CrosswalkWebViewManager: { JSNavigationScheme } }
 } = ReactNative;
 
-var resolveAssetSource = require('../../node_modules/react-native/Libraries/Image/resolveAssetSource');
+var resolveAssetSource = require('react-native/Libraries/Image/resolveAssetSource')
+
 
 var WEBVIEW_REF = 'crosswalkWebView';
 
@@ -19,25 +20,17 @@ var CrosswalkWebView = React.createClass({
         localhost:               PropTypes.bool.isRequired,
         onNavigationStateChange: PropTypes.func,
         onBridgeMessage:         PropTypes.func,
-        injectedJavascript:      PropTypes.string,
+        onError:                 PropTypes.func,
         url:                     PropTypes.string,
+        injectedJavaScript:      PropTypes.string,
         source:                  PropTypes.oneOfType([
           PropTypes.shape({
-            /*
-             * The URI to load in the WebView. Can be a local or remote file.
-             */
-            uri: PropTypes.string,
+           uri: PropTypes.string, // uri to load in webview
           }),
           PropTypes.shape({
-            /*
-             * A static HTML page to display in the WebView.
-             */
-            html: PropTypes.string,
+           html: PropTypes.string, // static html to load in webview
           }),
-          /*
-           * Used internally by packager.
-           */
-          PropTypes.number,
+           PropTypes.number, // used internally by packager
         ]),
         ...View.propTypes
     },
@@ -47,25 +40,19 @@ var CrosswalkWebView = React.createClass({
         };
     },
     render () {
-        var webViewStyles = [styles.container, this.props.style];
-        var source = this.props.source || {};
-        if (this.props.url) {
-          source.uri = this.props.url;
-        }
-
-        return (
-            <NativeCrosswalkWebView
-                ref={ WEBVIEW_REF }
-                key="webViewKey"
-                style={ webViewStyles }
-                source={ resolveAssetSource(source) }
-                testID={ this.props.testID }
-                localhost={ this.props.localhost }
-                injectedJavascript={ this.props.injectedJavascript }
-                onNavigationStateChange={ this.onNavigationStateChange }
-                onBridgeMessage={ this.onBridgeMessage }
-                 />
-        );
+      var source = this.props.source || {};
+      if (this.props.url) {
+        source.uri = this.props.url;
+      }
+      return (
+          <NativeCrosswalkWebView
+            { ...this.props }
+            ref={ WEBVIEW_REF }
+            source={resolveAssetSource(source)}
+            onNavigationStateChange={ this.onNavigationStateChange }
+            onBridgeMessage={ this.onBridgeMessage }
+            onError={ this.onError } />
+      );
     },
     getWebViewHandle () {
         return ReactNative.findNodeHandle(this.refs[WEBVIEW_REF]);
@@ -80,6 +67,11 @@ var CrosswalkWebView = React.createClass({
         var { onBridgeMessage } = this.props;
         if (onBridgeMessage) {
             onBridgeMessage(event.nativeEvent);
+        },
+    onError (event) {
+        var { onError } = this.props;
+        if (onError) {
+            onError(event.nativeEvent);
         }
     },
     goBack () {

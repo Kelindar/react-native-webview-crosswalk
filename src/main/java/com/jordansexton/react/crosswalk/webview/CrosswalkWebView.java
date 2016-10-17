@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.SystemClock;
 import android.webkit.ValueCallback;
+import android.text.TextUtils;
 
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactContext;
@@ -13,12 +14,17 @@ import com.facebook.react.uimanager.events.EventDispatcher;
 import org.xwalk.core.XWalkNavigationHistory;
 import org.xwalk.core.XWalkResourceClient;
 import org.xwalk.core.XWalkView;
+import javax.annotation.Nullable;
 
 class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
 
     private final Activity activity;
     private final EventDispatcher eventDispatcher;
     private final ResourceClient resourceClient;
+
+    private @Nullable String injectedJavaScript;
+
+    private boolean isJavaScriptInjected;
 
     public CrosswalkWebView (ReactContext reactContext, Activity _activity) {
         super(reactContext, _activity);
@@ -38,10 +44,6 @@ class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
         resourceClient.setLocalhost(localhost);
     }
 
-    public void setInjectedJavaScript (String injectedJavascript) {
-        resourceClient.setInjectedJavaScript(injectedJavascript);
-    }
-
     @Override
     public void onHostResume() {
         resumeTimers();
@@ -57,6 +59,26 @@ class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
     @Override
     public void onHostDestroy() {
         onDestroy();
+    }
+
+
+    public void load (String url, String content) {
+        isJavaScriptInjected = false;
+        super.load(url, content);
+    }
+
+    public void setInjectedJavaScript(@Nullable String js) {
+        injectedJavaScript = js;
+    }
+
+    public void callInjectedJavaScript() {
+        if (!isJavaScriptInjected) {
+            isJavaScriptInjected = true;
+        }
+
+        if (injectedJavaScript != null && !TextUtils.isEmpty(injectedJavaScript)) {
+            this.evaluateJavascript(injectedJavaScript, null);
+        }
     }
 
     protected class ResourceClient extends XWalkResourceClient {
@@ -81,15 +103,8 @@ class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
 
         @Override
         public void onLoadFinished (XWalkView view, String url) {
+            ((CrosswalkWebView) view).callInjectedJavaScript();
             XWalkNavigationHistory navigationHistory = view.getNavigationHistory();
-
-            /*eventDispatcher.dispatchEvent(
-                new CrosswalkWebViewMessageEvent(
-                    getId(),
-                    SystemClock.uptimeMillis(),
-                    "onLoadFinished: " + url
-                )
-            );*/
 
             if (url.contains("wvb")) {
                 // If it's a bridge message, fetch the messages in flight and dispatch the event
@@ -132,15 +147,6 @@ class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
         public void onLoadStarted (XWalkView view, String url) {
             XWalkNavigationHistory navigationHistory = view.getNavigationHistory();
 
-
-            /*eventDispatcher.dispatchEvent(
-                new CrosswalkWebViewMessageEvent(
-                    getId(),
-                    SystemClock.uptimeMillis(),
-                    "onLoadStarted: " + url
-                )
-            );*/
-
             // Check if it's a web view message
             if (url.contains("wvb")) {
                 // Do nothing
@@ -161,6 +167,19 @@ class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
         }
 
         @Override
+        public void onReceivedLoadError (XWalkView view, int errorCode, String description, String failingUrl) {
+            eventDispatcher.dispatchEvent(
+                new ErrorEvent(
+                    getId(),
+                    SystemClock.uptimeMillis(),
+                    errorCode,
+                    description,
+                    failingUrl
+                )
+            );
+        }
+
+        @Override
         public boolean shouldOverrideUrlLoading (XWalkView view, String url) {
             Uri uri = Uri.parse(url);
             if (uri.getScheme().equals(CrosswalkWebViewManager.JSNavigationScheme)) {
@@ -176,7 +195,7 @@ class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
                     return true;
                 }
             }
-            else if (uri.getScheme().equals("http") || uri.getScheme().equals("https")) {
+            else if (uri.getScheme().equals("http") || uri.getScheme().equals("https") || uri.getScheme().equals("file")) {
                 return false;
             }
             else {

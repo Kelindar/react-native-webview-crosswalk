@@ -5,6 +5,12 @@ Crosswalk's WebView for React Native on Android.
 [![npm downloads](http://img.shields.io/npm/dm/react-native-webview-crosswalk.svg?style=flat-square)](https://npmjs.org/package/react-native-webview-crosswalk "View this project on npm")
 [![npm licence](http://img.shields.io/npm/l/react-native-webview-crosswalk.svg?style=flat-square)](https://npmjs.org/package/react-native-webview-crosswalk "View this project on npm")
 
+### Dependencies
+
+* [0.2.0](https://github.com/jordansexton/react-native-webview-crosswalk/releases/tag/v0.2.0)+: `react-native >=0.25.0`, `react >= 0.14.5`
+
+* [0.1.0](https://github.com/jordansexton/react-native-webview-crosswalk/releases/tag/v0.1.0): `react-native >= 0.19.0`
+
 ### Installation
 
 * From the root of your React Native project
@@ -12,7 +18,7 @@ Crosswalk's WebView for React Native on Android.
 ```shell
 npm install react-native-webview-crosswalk --save
 mkdir android/app/libs
-cp node_modules/react-native-webview-crosswalk/libs/xwalk_core_library-17.46.448.10.aar android/app/libs/
+cp node_modules/react-native-webview-crosswalk/libs/xwalk_core_library-18.48.477.13.aar android/app/libs/
 ```
 
 ### Include module in your Android project
@@ -49,7 +55,7 @@ allprojects {
 ...
 dependencies {
   ...
-  compile (name: "xwalk_core_library-17.46.448.10", ext: "aar")    // <--- add this line
+  compile (name: "xwalk_core_library-18.48.477.13", ext: "aar")    // <--- add this line
   compile project(':CrosswalkWebView')                             // <--- add this line
 }
 ```
