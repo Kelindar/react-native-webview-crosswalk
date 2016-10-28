@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.SystemClock;
-import android.webkit.ValueCallback;
 import android.text.TextUtils;
+import android.webkit.ValueCallback;
+
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.uimanager.UIManagerModule;
@@ -20,7 +21,9 @@ import javax.annotation.Nullable;
 class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
 
     private final Activity activity;
+
     private final EventDispatcher eventDispatcher;
+
     private final ResourceClient resourceClient;
     private final UIClient uiClient;
 
@@ -97,8 +100,8 @@ class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
     }
 
     protected class ResourceClient extends XWalkResourceClient {
+
         private Boolean localhost = false;
-        private String injectedJavascript = null;
 
         ResourceClient (XWalkView view) {
             super(view);
@@ -112,16 +115,12 @@ class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
             localhost = _localhost;
         }
 
-        public void setInjectedJavaScript (String _injectedJavascript) {
-            injectedJavascript = _injectedJavascript;
-        }
-
         @Override
         public void onLoadFinished (XWalkView view, String url) {
             ((CrosswalkWebView) view).callInjectedJavaScript();
-            XWalkNavigationHistory navigationHistory = view.getNavigationHistory();
 
-            if (url.contains("wvb")) {
+            XWalkNavigationHistory navigationHistory = view.getNavigationHistory();
+             if (url.contains("wvb")) {
                 // If it's a bridge message, fetch the messages in flight and dispatch the event
                 ValueCallback<String> callback = new ValueCallback<String>() {
                         @Override
@@ -151,34 +150,28 @@ class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
                         navigationHistory.canGoForward()
                     )
                 );
-                
-                if (injectedJavascript != null) {
-                    view.load("javascript:(function() {\n" + injectedJavascript + ";\n})();", null);
-                }
             }
+
         }
 
         @Override
         public void onLoadStarted (XWalkView view, String url) {
             XWalkNavigationHistory navigationHistory = view.getNavigationHistory();
-
+            
             // Check if it's a web view message
-            if (url.contains("wvb")) {
-                // Do nothing
-            } else {
-                // it's an actual navigation change, dispatch the event
-                eventDispatcher.dispatchEvent(
-                    new NavigationStateChangeEvent(
-                        getId(),
-                        SystemClock.uptimeMillis(),
-                        view.getTitle(),
-                        true,
-                        url,
-                        navigationHistory.canGoBack(),
-                        navigationHistory.canGoForward()
-                    )
-                );
-            }
+            if (url.contains("wvb")) return;
+
+            eventDispatcher.dispatchEvent(
+                new NavigationStateChangeEvent(
+                    getId(),
+                    SystemClock.uptimeMillis(),
+                    view.getTitle(),
+                    true,
+                    url,
+                    navigationHistory.canGoBack(),
+                    navigationHistory.canGoForward()
+                )
+            );
         }
 
         @Override

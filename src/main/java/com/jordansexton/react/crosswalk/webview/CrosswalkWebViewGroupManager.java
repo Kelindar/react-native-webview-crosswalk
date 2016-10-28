@@ -21,8 +21,11 @@ import java.util.Map;
 public class CrosswalkWebViewGroupManager extends ViewGroupManager<CrosswalkWebView> {
 
     public static final int GO_BACK = 1;
+
     public static final int GO_FORWARD = 2;
+
     public static final int RELOAD = 3;
+
     public static final int SEND_MESSAGE = 4;
 
     @VisibleForTesting
@@ -57,24 +60,6 @@ public class CrosswalkWebViewGroupManager extends ViewGroupManager<CrosswalkWebV
         view.onDestroy();
     }
 
-    @ReactProp(name = "injectedJavaScript")
-    public void setInjectedJavaScript (XWalkView view, @Nullable String injectedJavaScript) {
-        ((CrosswalkWebView) view).setInjectedJavaScript(injectedJavaScript);
-    }
-
-    @ReactProp(name = "url")
-    public void setUrl (final CrosswalkWebView view, @Nullable final String url) {
-        Activity _activity = reactContext.getCurrentActivity();
-        if (_activity != null) {
-            _activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run () {
-                    view.load(url, null);
-                }
-            });
-        }
-    }
-
     @ReactProp(name = "source")
     public void setSource(final CrosswalkWebView view, @Nullable ReadableMap source) {
       Activity _activity = reactContext.getCurrentActivity();
@@ -103,6 +88,25 @@ public class CrosswalkWebViewGroupManager extends ViewGroupManager<CrosswalkWebV
           }
       }
       setUrl(view, BLANK_URL);
+    }
+
+
+    @ReactProp(name = "injectedJavaScript")
+    public void setInjectedJavaScript (XWalkView view, @Nullable String injectedJavaScript) {
+        ((CrosswalkWebView) view).setInjectedJavaScript(injectedJavaScript);
+    }
+
+    @ReactProp(name = "url")
+    public void setUrl (final CrosswalkWebView view, @Nullable final String url) {
+        Activity _activity = reactContext.getCurrentActivity();
+        if (_activity != null) {
+            _activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run () {
+                    view.load(url, null);
+                }
+            });
+        }
     }
 
     @ReactProp(name = "localhost")
@@ -135,12 +139,12 @@ public class CrosswalkWebViewGroupManager extends ViewGroupManager<CrosswalkWebV
                 view.reload(XWalkView.RELOAD_NORMAL);
                 break;
             case SEND_MESSAGE:
-                sendMessage(view, args.getString(0));
+                sendMessage(view, args.toString());
                 break;
         }
     }
 
-    private void sendMessage(CrosswalkWebView view, String message) {
+   private void sendMessage(CrosswalkWebView view, String message) {
         String script = "window.WebViewBridge.__push__('" + message + "');";
         view.evaluateJavascript(script, null);
     }
@@ -148,9 +152,12 @@ public class CrosswalkWebViewGroupManager extends ViewGroupManager<CrosswalkWebV
     @Override
     public Map getExportedCustomDirectEventTypeConstants () {
         return MapBuilder.of(
-            CrosswalkWebViewMessageEvent.EVENT_NAME, MapBuilder.of("registrationName", "onBridgeMessage"),
-            NavigationStateChangeEvent.EVENT_NAME, MapBuilder.of("registrationName", "onNavigationStateChange"),
-            ErrorEvent.EVENT_NAME, MapBuilder.of("registrationName", "onError")
+            NavigationStateChangeEvent.EVENT_NAME,
+            MapBuilder.of("registrationName", "onNavigationStateChange"),
+            ErrorEvent.EVENT_NAME,
+            MapBuilder.of("registrationName", "onError"),
+            CrosswalkWebViewMessageEvent.EVENT_NAME,
+            MapBuilder.of("registrationName", "onBridgeMessage")
         );
     }
 

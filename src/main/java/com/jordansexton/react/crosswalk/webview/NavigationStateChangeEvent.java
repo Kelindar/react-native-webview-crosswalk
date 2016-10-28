@@ -10,9 +10,13 @@ class NavigationStateChangeEvent extends Event<NavigationStateChangeEvent> {
     public static final String EVENT_NAME = "navigationStateChange";
 
     private final String title;
+
     private final boolean isLoading;
+
     private final String url;
+
     private final boolean canGoBack;
+
     private final boolean canGoForward;
 
     protected NavigationStateChangeEvent (int viewTag, long timestampMs, String _title, boolean _isLoading, String _url, boolean _canGoBack, boolean _canGoForward) {
