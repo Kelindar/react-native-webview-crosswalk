@@ -67,7 +67,8 @@ var CrosswalkWebView = React.createClass({
         var { onBridgeMessage } = this.props;
         if (onBridgeMessage) {
             onBridgeMessage(event.nativeEvent);
-        },
+        }
+    },
     onError (event) {
         var { onError } = this.props;
         if (onError) {
