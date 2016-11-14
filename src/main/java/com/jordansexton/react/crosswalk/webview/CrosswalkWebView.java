@@ -15,6 +15,7 @@ import org.xwalk.core.XWalkNavigationHistory;
 import org.xwalk.core.XWalkResourceClient;
 import org.xwalk.core.XWalkUIClient;
 import org.xwalk.core.XWalkView;
+import org.xwalk.core.XWalkPreferences;
 
 import javax.annotation.Nullable;
 
@@ -157,6 +158,9 @@ class CrosswalkWebView extends XWalkView implements LifecycleEventListener {
         @Override
         public void onLoadStarted (XWalkView view, String url) {
             XWalkNavigationHistory navigationHistory = view.getNavigationHistory();
+            
+            // turn on debugging
+            XWalkPreferences.setValue(XWalkPreferences.REMOTE_DEBUGGING, true);
             
             // Check if it's a web view message
             if (url.contains("wvb")) return;
